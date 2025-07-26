@@ -71,16 +71,6 @@ Elimina un usuario de la base de datos. Para realizarlo, debemos especificar en 
 	- `400 Bad Request` Se obtendrá el error en caso de que no exista el usuario con el ID ingresado.
 	- `200 OK` Usuario eliminado.
 
-
-## Estructura del proyecto
-src/main/java
-├── com/example/crud
-│   ├── controller      # Controladores REST
-│   ├── entity          # Entidades JPA
-│   ├── repository      # Repositorios Spring Data
-│   ├── service         # Lógica de negocio
-│   └── JavaSpringCRUD.java # Clase principal
-
 ## Requisitos
 - Java 17+
 - Maven 3.6+

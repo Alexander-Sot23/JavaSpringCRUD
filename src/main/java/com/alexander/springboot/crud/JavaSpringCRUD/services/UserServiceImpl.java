@@ -1,18 +1,18 @@
 package com.alexander.springboot.crud.JavaSpringCRUD.services;
 
 import com.alexander.springboot.crud.JavaSpringCRUD.entities.User;
-import com.alexander.springboot.crud.JavaSpringCRUD.reposiroties.UserReposiroty;
+import com.alexander.springboot.crud.JavaSpringCRUD.exceptions.UserNotFoundException;
+import com.alexander.springboot.crud.JavaSpringCRUD.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     @Autowired
-    private UserReposiroty userReposiroty;
+    private UserRepository userReposiroty;
 
     @Override
     public List<User> findAll() {
@@ -20,8 +20,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userReposiroty.findById(id);
+    public User findById(Long id) {
+        return userReposiroty.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Override
@@ -30,25 +31,21 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public Optional<User> update(Long id, User user) {
-        Optional<User> userDB = userReposiroty.findById(id);
-        if(userDB.isPresent()){
-            User userU = userDB.orElseThrow();
-            userU.setName(user.getName());
-            userU.setLastName(user.getLastName());
-            userU.setBirthdayDate(user.getBirthdayDate());
+    public User update(Long id, User user) {
+        User userUpdate = userReposiroty.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
 
-            return Optional.of(userReposiroty.save(userU));
-        }
-        return Optional.empty();
+        userUpdate.setName(user.getName());
+        userUpdate.setLastName(user.getLastName());
+        userUpdate.setBirthdayDate(user.getBirthdayDate());
+
+        return userReposiroty.save(userUpdate);
     }
 
     @Override
-    public Optional<User> delete(Long id) {
-        Optional<User> userDB = userReposiroty.findById(id);
-        userDB.ifPresent(u -> {
-            userReposiroty.delete(u);
-        });
-        return userDB;
+    public void delete(Long id) {
+        User userDelete = userReposiroty.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        userReposiroty.delete(userDelete);
     }
 }
